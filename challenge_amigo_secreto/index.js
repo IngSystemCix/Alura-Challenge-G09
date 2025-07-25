@@ -59,29 +59,29 @@ const generateSecretFriends = () => {
 
   // Derangement algorithm to ensure no one gets themselves and no repeats
   function generateDerangement(array) {
-    let n = array.length;
-    let result = array.slice();
+    const n = array.length;
+    let indices = [...Array(n).keys()];
+    let deranged = [];
+
     let attempts = 0;
     do {
-      // Fisher-Yates shuffle
+      deranged = [...indices];
       for (let i = n - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [result[i], result[j]] = [result[j], result[i]];
+        [deranged[i], deranged[j]] = [deranged[j], deranged[i]];
       }
       attempts++;
-      // Check for derangement (no one gets themselves)
-    } while (
-      result.some((p, i) => p.name === array[i].name) &&
-      attempts < 1000
-    );
-    // If after 1000 attempts no derangement, show error
-    if (result.some((p, i) => p.name === array[i].name)) {
+    } while (deranged.some((val, i) => val === i) && attempts < 1000);
+
+    if (deranged.some((val, i) => val === i)) {
       alert(
         "No se pudo generar una asignación válida de amigos secretos. Intenta de nuevo."
       );
       return null;
     }
-    return result;
+
+    // Devolver arreglo de participantes en nuevo orden
+    return deranged.map((index) => array[index]);
   }
 
   const shuffled = generateDerangement(participantList);
